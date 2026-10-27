@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>AutoApprove RPA Companion</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <!-- Cabeçalho Corporativo -->
+  <header class="hdr">
+    <div class="brand-row">
+      <div class="logo">⚡</div>
+      <div class="brand-text">
+        <h1>AutoApprove RPA</h1>
+        <p>Motor Universal de Automação & Macros</p>
+      </div>
+      <span class="auth-pill" title="Sessão Corporativa Autenticada">MS OAuth OK</span>
+    </div>
+  </header>
+
+  <!-- Seletor de Automação / Tarefa Ativa -->
+  <section class="task-selector-box">
+    <label for="select-active-task" class="box-label">Automação Selecionada:</label>
+    <div class="task-select-row">
+      <select id="select-active-task" class="custom-select"></select>
+      <button id="btn-new-task" class="btn btn-secondary btn-icon" title="Criar Nova Automação">+ Nova</button>
+    </div>
+    <div class="task-meta-row">
+      <span id="task-badge-category" class="task-badge">Universal</span>
+      <span id="task-badge-pattern" class="task-badge badge-blue">Macro Livre</span>
+      <span id="task-steps-count" class="task-badge badge-gray">0 passos</span>
+    </div>
+  </section>
+
+  <!-- Métricas em Tempo Real -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="lbl">Execuções</span>
+      <strong id="st-approved" class="text-emerald">0</strong>
+      <small id="st-approved-sub">concluídos</small>
+    </div>
+    <div class="stat-card">
+      <span class="lbl">Ciclo / Pág</span>
+      <strong id="st-page">1</strong>
+      <small id="st-page-info">em execução</small>
+    </div>
+    <div class="stat-card">
+      <span class="lbl">Status</span>
+      <strong id="st-status">Pronto</strong>
+      <small id="st-status-sub">Aguardando início</small>
+    </div>
+  </section>
+
+  <!-- Abas de Navegação -->
+  <nav class="tabs-nav">
+    <button class="tab-btn active" data-tab="tab-exec">▶️ Executar</button>
+    <button class="tab-btn" data-tab="tab-steps">📋 Passos</button>
+    <button class="tab-btn" data-tab="tab-record">🔴 Gravar</button>
+    <button class="tab-btn" data-tab="tab-logs">📜 Logs</button>
+  </nav>
+
+  <!-- Aba 1: Execução -->
+  <div id="tab-exec" class="tab-content active">
+    <div class="actions-card">
+      <button id="btn-start" class="btn btn-primary btn-large">
+        ▶️ EXECUTAR ESTA TAREFA
+      </button>
+      <div class="button-row">
+        <button id="btn-stop" class="btn btn-danger">Pausar / Parar</button>
+        <button id="btn-quick-record" class="btn btn-secondary">🔴 Gravar na Tela</button>
+      </div>
+    </div>
+
+    <!-- Opções de Repetição -->
+    <div class="config-card">
+      <span class="lbl">Modo de Repetição da Tarefa:</span>
+      <div class="repeat-controls">
+        <label class="radio-label">
+          <input type="radio" name="repeatMode" value="once" id="rep-once" checked />
+          <span>Executar 1x</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="repeatMode" value="repeat_n" id="rep-n" />
+          <span>Repetir:</span>
+          <input type="number" id="input-repeat-count" min="1" max="1000" value="10" class="mini-input" />
+          <span>vezes</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="repeatMode" value="loop_list" id="rep-loop" />
+          <span>Loop de Lista (Tabela com Subpáginas)</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Velocidade & Anti-Bot -->
+    <div class="speed-box">
+      <span class="lbl">Velocidade & Variação Humana (Anti-Bot):</span>
+      <div class="speed-buttons">
+        <button class="speed-btn active" data-speed="human">Humana (Segura)</button>
+        <button class="speed-btn" data-speed="fast">Rápida (3x)</button>
+        <button class="speed-btn" data-speed="turbo">Turbo (8x)</button>
+      </div>
+    </div>
+
+    <div class="info-callout">
+      <strong>Sessão Microsoft 365 Autenticada:</strong>
+      <p>A automação roda dentro da sua própria aba já autenticada. Não há risco de bloqueio de Acesso Condicional ou Intune!</p>
+    </div>
+  </div>
+
+  <!-- Aba 2: Passos Gravados da Tarefa -->
+  <div id="tab-steps" class="tab-content">
+    <div class="steps-header">
+      <div>
+        <h3 id="steps-task-title">Passos Gravados</h3>
+        <p class="subtext">Sequência de ações que o robô executará nesta página.</p>
+      </div>
+      <button id="btn-clear-steps" class="btn btn-secondary btn-small" title="Limpar Passos">Limpar</button>
+    </div>
+
+    <div id="steps-empty-state" class="empty-box" style="display: none;">
+      <p>Nenhum passo gravado ainda para esta tarefa.</p>
+      <button id="btn-start-record-empty" class="btn btn-primary btn-small" style="margin-top: 8px;">
+        🔴 Gravar Primeiros Passos
+      </button>
+    </div>
+
+    <div id="steps-list-container" class="steps-timeline"></div>
+  </div>
+
+  <!-- Aba 3: Como Gravar Qualquer Tarefa -->
+  <div id="tab-record" class="tab-content">
+    <div class="record-instructions-card">
+      <h3>Modo de Aprendizado por Demonstração</h3>
+      <p>Você pode ensinar o robô a realizar <strong>qualquer rotina web</strong> em 3 passos simples:</p>
+      
+      <ol class="instructions-list">
+        <li>
+          <strong>1. Abra a página desejada:</strong>
+          <span>Acesse o portal da sua empresa (SAP, Totvs, Jira, ServiceNow, etc.) nesta aba.</span>
+        </li>
+        <li>
+          <strong>2. Acione o Gravador ao Vivo:</strong>
+          <span>Uma barra flutuante aparecerá na página. Escolha <em>Gravação Livre</em> ou <em>Assistente de Tabela</em>.</span>
+        </li>
+        <li>
+          <strong>3. Clique e preencha normalmente:</strong>
+          <span>O robô aprende cada clique e digitação em tempo real. Ao terminar, clique em Salvar!</span>
+        </li>
+      </ol>
+
+      <div class="record-buttons-stack">
+        <button id="btn-launch-free-record" class="btn btn-primary btn-large">
+          🪄 Iniciar Gravação Livre na Tela
+        </button>
+        <button id="btn-launch-wizard-record" class="btn btn-secondary">
+          📋 Iniciar Assistente de Tabela (4 Fases)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aba 4: Logs de Auditoria -->
+  <div id="tab-logs" class="tab-content">
+    <div class="logs-header">
+      <h3>Histórico de Eventos</h3>
+      <button id="btn-export-csv" class="btn btn-secondary btn-small">Baixar CSV (.csv)</button>
+    </div>
+    <div id="log-list" class="log-container"></div>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
